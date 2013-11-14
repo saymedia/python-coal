@@ -64,3 +64,12 @@ class TestDefer(unittest.TestCase):
             DuplicateResolutionError,
             lambda: defer.resolve(3),
         )
+
+    def test_propagate_task(self):
+        defer = Defer()
+        defer.promise.task = "baz"
+        promise_2 = defer.promise.then(lambda value: value)
+        self.assertEqual(
+            promise_2.task,
+            "baz",
+        )
