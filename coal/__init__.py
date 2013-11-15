@@ -1,5 +1,7 @@
 
 from datetime import datetime
+import collections
+import numbers
 
 
 __all__ = [
@@ -8,6 +10,7 @@ __all__ = [
     "when",
     "Task",
     "TaskQueue",
+    "flatten_promises",
 ]
 
 
@@ -246,6 +249,10 @@ class TaskQueue(object):
 
         return task
 
+    def add_tasks(self, tasks):
+        for task in tasks:
+            self.add_task(task)
+
     def _record_result(self, task, value):
         priority = task.priority
         batch_key = task.batch_key
@@ -328,6 +335,84 @@ class TaskQueue(object):
                         self.cycle_limit
                     )
                 )
+
+
+def flatten_promises(data, log_list=None):
+
+    promises = []
+
+    def flatten_obj(obj):
+        if isinstance(obj, numbers.Number) or isinstance(obj, basestring):
+            # numbers and strings can never contain promises, so
+            # nothing to do here.
+            return
+        # the string check has to be before this one because strings
+        # are sequences and thus containers.
+        elif isinstance(obj, collections.Container):
+            print "%r is a collection" % obj
+            if isinstance(obj, collections.Sequence):
+                member_generator = (
+                    (i, value) for i, value in enumerate(obj)
+                )
+            elif isinstance(obj, collections.Mapping):
+                member_generator = (
+                    (k, obj[k]) for k in obj.keys()
+                )
+            else:
+                raise TypeError(
+                    "Don't know how to find promises in %s" % (
+                        type(obj).__name__
+                    )
+                )
+            for k, v in member_generator:
+                flatten_key(obj, k, v)
+            print "%r is a primitive" % obj
+        else:
+            print "%r is a random object" % obj
+            public_names = (
+                name for name in dir(obj) if not name.startswith("_")
+            )
+            for attr_name in public_names:
+                try:
+                    v = getattr(obj, attr_name)
+                except AttributeError:
+                    # Ignore attributes that we can't read.
+                    continue
+                flatten_attr(obj, attr_name, v)
+
+    def flatten_key(coll, k, v):
+        if isinstance(v, Promise):
+            promises.append(v)
+            def afterwards(nextV):
+                flatten_key(coll, k, nextV)
+            v.then(afterwards)
+        else:
+            coll[k] = v
+            flatten_obj(v)
+
+    def flatten_attr(obj, name, v):
+        if isinstance(v, Promise):
+            promises.append(v)
+            def afterwards(nextV):
+                flatten_attr(obj, name, nextV)
+            v.then(afterwards)
+        else:
+            setattr(obj, name, v)
+            flatten_obj(v)
+
+    flatten_obj(data)
+
+    queue = TaskQueue()
+
+    while len(promises) > 0:
+        tasks = (
+            promise.task for promise in promises
+            if getattr(promise, "task", None) is not None
+        )
+        queue.add_tasks(tasks)
+        promises = []
+        # The resolution of promises may cause more promises to be queued.
+        queue.work(log_list=log_list)
 
 
 class DuplicateResolutionError(Exception):
