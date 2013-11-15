@@ -22,6 +22,7 @@ cache round-trip and then the few misses to be handled via a more expensive
 lookup, eventually writing the results back to memcached using `set_multi`.
 """
 
+
 # create a singleton object that we can use to signal a cache miss
 # while allowing None to be a valid cache value.
 class CacheMiss(object):

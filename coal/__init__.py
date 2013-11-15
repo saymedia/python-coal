@@ -23,8 +23,10 @@ def force_promise(value):
         return value
     else:
         promise = Promise()
+
         def then(callback):
             return force_promise(callback(value))
+
         promise.then = then
         return promise
 
@@ -262,7 +264,6 @@ class TaskQueue(object):
 
         self.results[result_key] = value
 
-
     def work_once(self, log_list=None):
         subqueue = None
         for priority_name in TaskPriority.all_values():
@@ -383,8 +384,10 @@ def flatten_promises(data, log_list=None):
     def flatten_key(coll, k, v):
         if isinstance(v, Promise):
             promises.append(v)
+
             def afterwards(nextV):
                 flatten_key(coll, k, nextV)
+
             v.then(afterwards)
         else:
             coll[k] = v
@@ -393,8 +396,10 @@ def flatten_promises(data, log_list=None):
     def flatten_attr(obj, name, v):
         if isinstance(v, Promise):
             promises.append(v)
+
             def afterwards(nextV):
                 flatten_attr(obj, name, nextV)
+
             v.then(afterwards)
         else:
             setattr(obj, name, v)

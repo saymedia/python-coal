@@ -34,7 +34,7 @@ class TestFlattenPromises(unittest.TestCase):
 
         self.assertEqual(
             arr,
-            [ 2, 5, 10, [16] ],
+            [2, 5, 10, [16]],
         )
 
     def test_dict(self):

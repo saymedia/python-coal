@@ -1,3 +1,4 @@
 -e .
 nose
 mock
+pep8

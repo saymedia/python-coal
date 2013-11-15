@@ -2,6 +2,7 @@
 import coal
 import mock
 
+
 # assign this into a TestCase subclass to make it usable from that case
 def assert_work_log(self, got_log, expected):
     got = []

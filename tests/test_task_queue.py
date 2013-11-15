@@ -12,6 +12,7 @@ class TestTaskQueue(unittest.TestCase):
     def test_add_task(self):
         class TaskType1(testutil.MockTask):
             pass
+
         class TaskType2(testutil.MockTask):
             pass
 
@@ -50,29 +51,31 @@ class TestTaskQueue(unittest.TestCase):
 
         self.assertEqual(
             set(queue.subqueues[1].keys()),
-            set([
-                (TaskType1, 'a'),
-                (TaskType1, 'b'),
-                (TaskType2, 'a'),
-                (TaskType2, 'b'),
-            ]),
+            set(
+                [
+                    (TaskType1, 'a'),
+                    (TaskType1, 'b'),
+                    (TaskType2, 'a'),
+                    (TaskType2, 'b'),
+                ]
+            ),
         )
         self.assertEqual(
             set(queue.subqueues[4].keys()),
-            set([
-                (TaskType1, 'a'),
-                (TaskType1, 'b'),
-                (TaskType2, 'a'),
-                (TaskType2, 'b'),
-            ]),
+            set(
+                [
+                    (TaskType1, 'a'),
+                    (TaskType1, 'b'),
+                    (TaskType2, 'a'),
+                    (TaskType2, 'b'),
+                ]
+            ),
         )
 
         for compound_key in ((TaskType1, 'a'), (TaskType2, 'a')):
             self.assertEqual(
                 set(queue.subqueues[1][compound_key].keys()),
-                set([
-                    'Q', 'R'
-                ]),
+                set(['Q', 'R']),
             )
 
     def test_work(self):
