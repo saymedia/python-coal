@@ -4,4 +4,4 @@ python:
 install:
   - "pip install -U pip --use-mirrors"
   - "pip install -U -r requirements-test.txt coverage --use-mirrors"
-script: nosetests -v --with-coverage --cover-erase --cover-inclusive --cover-branches --cover-package=coal
+script: nosetests -v --with-coverage --cover-erase --cover-inclusive --cover-branches --cover-package=coal --cover-min-percentage=89
