@@ -1,2 +1,5 @@
 env/*
 *.pyc
+.coverage
+dist/*
+*.egg-info
