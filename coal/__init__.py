@@ -315,10 +315,12 @@ class TaskQueue(object):
 
     def work(self, cycle_limit=15, log_list=None):
         cycles = 0
+        total_attempted = 0
         while True:
             attempted = self.work_once(log_list=log_list)
             if attempted == 0:
-                break
+                return total_attempted
+            total_attempted = total_attempted + attempted
             cycles = cycles + 1
             if cycles > cycle_limit:
                 raise TooManyCyclesError(
