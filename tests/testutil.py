@@ -1,4 +1,7 @@
 
+import coal
+import mock
+
 # assign this into a TestCase subclass to make it usable from that case
 def assert_work_log(self, got_log, expected):
     got = []
@@ -17,3 +20,21 @@ def assert_work_log(self, got_log, expected):
         got,
         expected,
     )
+
+
+class MockTask(coal.Task):
+    work = mock.MagicMock()
+
+    def __init__(self, priority, batch_key, coalesce_key):
+        self.priority = priority
+        self._batch_key = batch_key
+        self._coalesce_key = coalesce_key
+        super(MockTask, self).__init__()
+
+    @property
+    def batch_key(self):
+        return self._batch_key
+
+    @property
+    def coalesce_key(self):
+        return self._coalesce_key
