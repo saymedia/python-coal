@@ -355,7 +355,6 @@ def flatten_promises(data, log_list=None):
         # the string check has to be before this one because strings
         # are sequences and thus containers.
         elif isinstance(obj, collections.Container):
-            print "%r is a collection" % obj
             if isinstance(obj, collections.Sequence):
                 member_generator = (
                     (i, value) for i, value in enumerate(obj)
@@ -372,9 +371,7 @@ def flatten_promises(data, log_list=None):
                 )
             for k, v in member_generator:
                 flatten_key(obj, k, v)
-            print "%r is a primitive" % obj
         else:
-            print "%r is a random object" % obj
             public_names = (
                 name for name in dir(obj) if not name.startswith("_")
             )
