@@ -146,6 +146,6 @@ class TestFlattenPromises(unittest.TestCase):
         self.assertEqual(string[0], "ha")
 
         func = lambda: "hey"
-        func_arr = [lambda: "hey"]
+        func_arr = [func]
         flatten_promises(func_arr)
         self.assertEqual(func_arr[0], func)
