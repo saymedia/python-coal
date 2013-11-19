@@ -6,7 +6,7 @@ except ImportError:
 
 setup(
     name="coal",
-    version="dev",
+    version="0.0.2",
     packages=['coal'],
     install_requires=[
     ]
