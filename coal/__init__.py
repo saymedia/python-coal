@@ -347,6 +347,11 @@ def flatten_promises(data, log_list=None):
             # numbers and strings can never contain promises, so
             # nothing to do here.
             return
+        elif callable(obj):
+            # skip callable stuff assuming it's stuff like methods.
+            # This assumption means we won't resolve promises inside
+            # callable objects, which is a reasonable compromise.
+            return
         # the string check has to be before this one because strings
         # are sequences and thus containers.
         elif isinstance(obj, collections.Container):
