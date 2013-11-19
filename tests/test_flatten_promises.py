@@ -134,3 +134,18 @@ class TestFlattenPromises(unittest.TestCase):
                 True
             ]
         )
+
+    def test_passthrough(self):
+
+        num = [1]
+        flatten_promises(num)
+        self.assertEqual(num[0], 1)
+
+        string = ["ha"]
+        flatten_promises(string)
+        self.assertEqual(string[0], "ha")
+
+        func = lambda: "hey"
+        func_arr = [lambda: "hey"]
+        flatten_promises(func_arr)
+        self.assertEqual(func_arr[0], func)
