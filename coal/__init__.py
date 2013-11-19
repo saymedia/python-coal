@@ -407,7 +407,12 @@ def flatten_promises(data, log_list=None):
 
             v.then(afterwards)
         else:
-            setattr(obj, name, v)
+            if v is not getattr(obj, name):
+                try:
+                    setattr(obj, name, v)
+                except AttributeError:
+                    # ignore attributes that we can't write.
+                    pass
             flatten_obj(v)
 
     flatten_obj(data)
